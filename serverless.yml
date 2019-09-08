@@ -8,11 +8,21 @@ plugins:
   - serverless-bundle # Package our functions with Webpack
   - serverless-offline
 
+custom:
+  # Stage is based on what is passed when running serverless commands,
+  # or fallback to what is set in the provider section.
+  stage: ${opt:stage, self:provider.stage}
+  tableName: ${self:custom.stage}-notes
+
 provider:
   name: aws
   runtime: nodejs8.10
   stage: dev
   region: us-east-1
+
+  # These env vars are made available to our functions under process.env
+  environment:
+    tableName: ${self:custom.tableName}
 
   # 'iamRoleStatements' defines the permission policy for the Lambda function.
   # In this case Lambda functions are granted with permissions to access DynamoDB.
@@ -26,7 +36,8 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:us-east-1:*:*"
+      Resource:
+        - "Fn::GetAtt": [NotesTable, Arn]
 
 functions:
   # Defines an HTTP API endpoint that calls the main function in create.js
@@ -96,3 +107,5 @@ functions:
 resources:
   # API Gateway Errors
   - ${file(resources/api-gateway-errors.yml)}
+  # DynamodDB
+  - ${file(resources/dynamodb-table.yml)}
