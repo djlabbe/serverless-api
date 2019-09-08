@@ -109,3 +109,5 @@ resources:
   - ${file(resources/api-gateway-errors.yml)}
   # DynamodDB
   - ${file(resources/dynamodb-table.yml)}
+  # S3
+  - ${file(resources/s3-bucket.yml)}
