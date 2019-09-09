@@ -104,6 +104,9 @@ functions:
           authorizer: aws_iam
 
   billing:
+    # Defines at HTTP API endpoint that calls the main function in billing.js
+    # - path: url path is /billing
+    # - method: POST reques
     handler: billing.main
     events:
       - http:
