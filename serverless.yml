@@ -13,6 +13,9 @@ custom:
   # or fallback to what is set in the provider section.
   stage: ${opt:stage, self:provider.stage}
   tableName: ${self:custom.stage}-notes
+  # Load our secret environment variables based on the current stage.
+  # Fallback to default if it is not in prod.
+  environment: ${file(env.yml):${self:custom.stage},file(env.yml):default}
 
 provider:
   name: aws
@@ -23,6 +26,7 @@ provider:
   # These env vars are made available to our functions under process.env
   environment:
     tableName: ${self:custom.tableName}
+    stripeSecretKey: ${self:custom.environment.stripeSecretKey}
 
   # 'iamRoleStatements' defines the permission policy for the Lambda function.
   # In this case Lambda functions are granted with permissions to access DynamoDB.
